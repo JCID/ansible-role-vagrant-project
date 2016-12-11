@@ -1,0 +1,29 @@
+---
+- name:             "{{ project_user }}: Kopieren id_rsa naar .ssh map"
+  copy:             src=./keys/
+                    dest=/home/{{ project_user }}/.ssh/
+                    owner={{ project_user }}
+                    group={{ project_user }}
+                    mode=0600
+
+- name:             "{{ project_user }}: zorgen dat we kunnen sshen naar deze user"
+  shell:            rm -f /home/{{ project_user }}/.ssh/authorized_keys && cp /home/vagrant/.ssh/authorized_keys /home/{{ project_user }}/.ssh/authorized_keys && chown {{ project_user }}:{{ project_user }} /home/{{ project_user }}/.ssh/authorized_keys
+  changed_when:     false
+
+- name:             "{{ project_user }}: Linken nginx config"
+  file:             src=/home/{{ project_user }}/domains/{{ project_domain }}/{{ nginx.path }}
+                    dest=/etc/nginx/conf.d/{{ project_user }}.conf
+                    state=link
+
+- name:             "{{ project_user }}: Linken fpm config"
+  file:             src=/home/{{ project_user }}/domains/{{ project_domain }}/{{ nginx.fpm }}
+                    dest=/etc/php-fpm.d/{{ project_user }}.conf
+                    state=link
+
+- name:             Start php-fpm
+  service:          name=php-fpm state=restarted
+  changed_when:     false
+
+- name:             Start nginx
+  service:          name=nginx state=restarted
+  changed_when:     false

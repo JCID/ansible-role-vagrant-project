@@ -1,0 +1,13 @@
+galaxy_info:
+  author: JCID
+  description: JCID 'vagrant-project' role.
+  company: JCID
+  license: MIT
+  min_ansible_version: 2.0
+  platforms:
+  - name: EL
+    versions:
+    - all
+  galaxy_tags: []
+
+dependencies: []
